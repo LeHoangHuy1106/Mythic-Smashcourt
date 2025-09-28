@@ -22,6 +22,7 @@ public class SkillPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textValue;
     [SerializeField] private TextMeshProUGUI textPrice;
     [SerializeField] private TextMeshProUGUI textCoin;
+    [SerializeField] private TextMeshProUGUI txtDes;   // ✅ mô tả skill
 
     [Header("Icons")]
     [SerializeField] private GameObject iconPower;
@@ -68,10 +69,20 @@ public class SkillPanel : MonoBehaviour
 
         switch (skill)
         {
-            case Skill.Power: textTitle.text = "Power"; break;
-            case Skill.Speed: textTitle.text = "Speed"; break;
-            case Skill.Time: textTitle.text = "Time"; break;
+            case Skill.Power:
+                textTitle.text = "Power";
+                if (txtDes) txtDes.text = "Boosts the ball’s power, making it easier to destroy weaker balls.";
+                break;
+            case Skill.Speed:
+                textTitle.text = "Speed";
+                if (txtDes) txtDes.text = "Increases the ball’s movement speed, allowing faster attacks.";
+                break;
+            case Skill.Time:
+                textTitle.text = "Time";
+                if (txtDes) txtDes.text = "Reduces cooldown between shots, letting you prepare balls faster.";
+                break;
         }
+
 
         RefreshUI();
     }
@@ -95,8 +106,6 @@ public class SkillPanel : MonoBehaviour
         int price = GetPrice(level + 1);
         if (textPrice) textPrice.text = price.ToString();
         SetCoin(DataGame.Instance.Coin);
-        // ✅ cập nhật coin hiện tại
-
     }
 
     private void OnClickUpgrade()
@@ -109,15 +118,10 @@ public class SkillPanel : MonoBehaviour
 
         if (DataGame.Instance.Coin >= price)
         {
-            // ✅ Trừ coin
             DataGame.Instance.SpendCoin(price);
-
-            // ✅ Update text coin trong panel ngay
-          
-
-            // ✅ Tăng level skill
             DataGame.Instance.SetSubLevel(index, level + 1);
             SettingPanel.Instance.PlaySound(1);
+
             NotificationNode.Instance?.ShowNotification(
                 $"{currentSkill} Upgrade Success!", NotificationType.Success);
 
@@ -137,10 +141,6 @@ public class SkillPanel : MonoBehaviour
                s == Skill.Power ? 1 : 2;
     }
 
-    /// <summary>
-    /// Giá nâng cấp theo dãy Fibonacci-like: 
-    /// L1=10, L2=20, Ln = L(n-1)+L(n-2)
-    /// </summary>
     private int GetPrice(int level)
     {
         if (level <= 1) return 10;
@@ -171,7 +171,6 @@ public class SkillPanel : MonoBehaviour
         target.localScale = endScale;
     }
 
-    // ✅ Hàm set coin
     public void SetCoin(int coin)
     {
         if (textCoin != null)

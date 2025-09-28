@@ -97,8 +97,8 @@ public class GameplayView : MonoBehaviour
         if (count >= totalStatue)
         {
             // disable 2 nhân vật khi end game
-            if (player != null) player.enabled = false;
-            if (enemy != null) enemy.enabled = false;
+            if (player != null) Destroy(player.gameObject);
+            if (enemy != null) Destroy (enemy.gameObject);
 
             if (playerScore == enemyScore)
             {
