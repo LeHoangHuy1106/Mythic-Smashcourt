@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   model: {fileID: 2441805398543888343}
-  checkCollider: {fileID: 0}
+  checkCollider: {fileID: 2260870295516769307}
   startY: -0.388
   endY: 0
   moveDuration: 3

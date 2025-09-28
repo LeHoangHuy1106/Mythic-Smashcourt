@@ -78,7 +78,7 @@ public class Tombstone : MonoBehaviour
     // Kiểm tra va chạm với statue qua trigger
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Statue"))
+        if (other.CompareTag("statue"))
         {
             overlapStatue = true;
         }
