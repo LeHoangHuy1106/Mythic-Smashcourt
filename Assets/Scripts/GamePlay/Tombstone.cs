@@ -5,29 +5,55 @@ public class Tombstone : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform model;  // gán model ở Inspector
+    [SerializeField] private Collider checkCollider; // collider bao ngoài (IsTrigger = true)
 
     [Header("Animation Config")]
     [SerializeField] private float startY = -0.388f;  // vị trí bắt đầu (chìm dưới đất)
     [SerializeField] private float endY = 0f;         // vị trí kết thúc (trồi lên)
     [SerializeField] private float moveDuration = 0.5f; // thời gian di chuyển
 
+    private bool overlapStatue = false;
+
     private void OnEnable()
     {
         if (model == null) return;
 
-        // Reset vị trí và rotation khi spawn
+        // Ẩn model ban đầu
+        model.gameObject.SetActive(false);
+
+        // Reset vị trí và rotation
         Vector3 pos = model.localPosition;
-        pos.y = startY;              // bắt đầu ở dưới đất
+        pos.y = startY;
         model.localPosition = pos;
 
         model.localRotation = Quaternion.Euler(
             -90f,
-            Random.Range(0f, 360f),  // random quanh trục Y
+            Random.Range(0f, 360f),
             90f
         );
 
-        // chạy animation move (từ startY -> endY)
-        StartCoroutine(MoveToTarget(model, endY, moveDuration));
+        // Reset flag
+        overlapStatue = false;
+
+        // Bắt đầu kiểm tra trong 0.2s
+        StartCoroutine(CheckBeforeAppear());
+    }
+
+    private IEnumerator CheckBeforeAppear()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        if (overlapStatue)
+        {
+            // Nếu đang chạm statue thì hủy
+            Destroy(gameObject);
+        }
+        else
+        {
+            // Nếu không, bật model và chạy animation
+            model.gameObject.SetActive(true);
+            StartCoroutine(MoveToTarget(model, endY, moveDuration));
+        }
     }
 
     private IEnumerator MoveToTarget(Transform target, float targetY, float duration)
@@ -47,5 +73,14 @@ public class Tombstone : MonoBehaviour
         }
 
         target.localPosition = end;
+    }
+
+    // Kiểm tra va chạm với statue qua trigger
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Statue"))
+        {
+            overlapStatue = true;
+        }
     }
 }
