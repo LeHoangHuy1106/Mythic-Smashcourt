@@ -19,6 +19,7 @@ public class Loading : MonoBehaviour
             loadingText.text = "Loading... 0%";
         }
         StartCoroutine(LoadingRoutine());
+
     }
 
     private IEnumerator LoadingRoutine()

@@ -1,45 +1,56 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // nếu bạn dùng TextMeshPro
+using TMPro;
 
 public class ItemLevel : MonoBehaviour
 {
     [Header("UI References")]
     public Button btnLevel;          // nút bấm
     public TMP_Text txtLevel;        // text hiển thị level
-    public GameObject lockObj;       // gameobject lock
+    public GameObject lockObj;       // icon lock (blocked)
+    public GameObject tickDone;      // icon tick (đã hoàn thành)
 
     [Header("Config")]
-    public int indexLevel;           // index level (level thứ mấy)
+    public int indexLevel;           // index 0-based
 
-    // Event cho button (có thể gắn ngoài hoặc trong code)
     public System.Action<int> onClickLevel;
 
     /// <summary>
-    /// Hàm khởi tạo thông tin cho ItemLevel
+    /// state: 0 = blocked (chưa chơi), 1 = current (đang mở), 2 = done (đã pass)
+    /// isUnlocked: vẫn giữ để tương thích, nhưng state sẽ quyết định UI cuối cùng.
     /// </summary>
-    /// <param name="levelIndex">số thứ tự level</param>
-    /// <param name="isUnlocked">trạng thái mở khóa</param>
-    /// <param name="onClick">hàm gọi khi click</param>
-    public void Init(int levelIndex, bool isUnlocked, System.Action<int> onClick)
+    public void Init(int levelIndex, bool isUnlocked, System.Action<int> onClick, int state = 0)
     {
         indexLevel = levelIndex;
-        txtLevel.text = (levelIndex + 1).ToString(); // hiển thị số level
+        if (txtLevel) txtLevel.text = (levelIndex + 1).ToString();
 
-        // Set active đối nhau: nếu mở khóa thì text hiển thị, lock tắt
-        txtLevel.gameObject.SetActive(isUnlocked);
-        lockObj.SetActive(!isUnlocked);
+        // Chuẩn hoá state vào [0..2]
+        state = Mathf.Clamp(state, 0, 2);
 
+        // Suy ra UI theo state
+        bool isBlocked = (state == 0);
+        bool isCurrent = (state == 1);
+        bool isDone = (state == 2);
+
+        // Hiển thị
+        if (txtLevel) txtLevel.gameObject.SetActive(!isBlocked); // chỉ hiện số khi current/done
+        if (lockObj) lockObj.SetActive(isBlocked);              // block mới hiện lock
+        if (tickDone) tickDone.SetActive(isDone);                // done mới hiện tick
+
+        // Click
         onClickLevel = onClick;
-
-        // Xóa listener cũ để tránh bị chồng nhiều lần
-        btnLevel.onClick.RemoveAllListeners();
-        btnLevel.onClick.AddListener(() =>
+        if (btnLevel)
         {
-            if (isUnlocked)
+            btnLevel.onClick.RemoveAllListeners();
+            btnLevel.interactable = isCurrent; // chỉ current mới click được
+
+            if (isCurrent)
             {
-                onClickLevel?.Invoke(indexLevel);
+                btnLevel.onClick.AddListener(() =>
+                {
+                    onClickLevel?.Invoke(indexLevel);
+                });
             }
-        });
+        }
     }
 }

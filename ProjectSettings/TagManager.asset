@@ -4,14 +4,11 @@
 TagManager:
   serializedVersion: 3
   tags:
+  - wall
   - ball
-  - block
-  - obstacle
-  - food
-  - mouse
-  - cheese
-  - explosion
-  - rock
+  - line
+  - statue
+  - tombstone
   layers:
   - Default
   - TransparentFX
