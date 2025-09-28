@@ -143,8 +143,8 @@ public class SkillPanel : MonoBehaviour
 
     private int GetPrice(int level)
     {
-        if (level <= 1) return 10;
-        if (level == 2) return 20;
+        if (level <= 1) return 5;
+        if (level == 2) return 10;
 
         int a = 10, b = 20, c = 0;
         for (int i = 3; i <= level; i++)
