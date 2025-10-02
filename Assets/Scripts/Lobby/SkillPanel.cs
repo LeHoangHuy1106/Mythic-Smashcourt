@@ -145,15 +145,21 @@ public class SkillPanel : MonoBehaviour
     {
         if (level <= 1) return 5;
         if (level == 2) return 10;
-        if (level == 3) return 20; // giữ nguyên giá trị cũ cho level 3
+        if (level == 3) return 20;
 
-        int price = 20; // giá tại level 3
+        int a = 10;  // level 2
+        int b = 20;  // level 3
+        int c = 0;
+
         for (int i = 4; i <= level; i++)
         {
-            price *= 3; // từ level 4 trở đi: gấp đôi giá trước
+            c = (a + b) * 2;
+            a = b;
+            b = c;
         }
-        return price;
+        return b;
     }
+
 
 
     private IEnumerator ScaleUp(Transform target, Vector3 endScale, float duration)

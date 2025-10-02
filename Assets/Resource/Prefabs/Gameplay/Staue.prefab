@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3795261929120605260
 Transform:
   m_ObjectHideFlags: 0
@@ -548,3 +548,4 @@ MonoBehaviour:
   magicAnimName: Magic circle
   magicCircleDuration: 1
   exploreStatue: {fileID: 3694340360967863558, guid: e08cb3555263dac47b2dbe0f22835ee8, type: 3}
+  lockX: 1
