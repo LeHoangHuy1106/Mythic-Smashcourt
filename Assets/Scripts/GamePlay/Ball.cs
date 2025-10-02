@@ -7,18 +7,16 @@ public class Ball : MonoBehaviour
 
     [Header("Config")]
     public Owner owner = Owner.Player;
-    public string wallTag = "wall";   // tag tường
+    public string wallTag = "wall";           // tag tường
     public string tombstoneTag = "tombstone"; // tag của tombstone
-    public int power = 1;             // chỉ số power (gán từ Character)
+    public int power = 1;                     // chỉ số power (gán từ Character)
 
     [Header("Explosion")]
-    public GameObject explosionPrefab; // Prefab hiệu ứng nổ
+    public GameObject explosionPrefab;        // Prefab hiệu ứng nổ
 
     [Header("Runtime")]
     public float speed = 10f;
     private Vector3 moveDir = Vector3.zero;
-
-    private const float PushOffWall = 0.05f;
 
     private void Update()
     {
@@ -30,7 +28,7 @@ public class Ball : MonoBehaviour
 
     public void Shoot(Vector3 dir, float newSpeed)
     {
-        SettingPanel.Instance.PlaySound(4);
+        if (SettingPanel.Instance != null) SettingPanel.Instance.PlaySound(4);
 
         moveDir = new Vector3(dir.x, 0f, dir.z).normalized;
         speed = newSpeed;
@@ -60,23 +58,11 @@ public class Ball : MonoBehaviour
     // ==== Collision cho wall + ball + tombstone ====
     private void OnCollisionEnter(Collision collision)
     {
-        // Wall
+        // Wall → nổ chính nó luôn
         if (collision.gameObject.CompareTag(wallTag))
         {
-            if (moveDir == Vector3.zero) return;
-
-            Vector3 n = collision.GetContact(0).normal;
-            n = new Vector3(n.x, 0f, n.z).normalized;
-
-            if (n.sqrMagnitude > 1e-6f)
-            {
-                moveDir = Vector3.Reflect(moveDir, n);
-                moveDir.y = 0f;
-                moveDir.Normalize();
-            }
-
-            Vector3 push = collision.GetContact(0).normal * PushOffWall;
-            transform.position += new Vector3(push.x, 0f, push.z);
+            SpawnExplosion(transform.position, transform.rotation);
+            Destroy(gameObject);
             return;
         }
 
@@ -84,8 +70,12 @@ public class Ball : MonoBehaviour
         if (collision.gameObject.CompareTag(tombstoneTag))
         {
             SpawnExplosion(transform.position, transform.rotation);
-            Destroy(collision.gameObject.transform.parent.gameObject); // hủy tombstone
-            Destroy(gameObject);           // hủy ball
+
+            var tomb = collision.gameObject.GetComponentInParent<Tombstone>();
+            if (tomb != null) Destroy(tomb.gameObject);
+            else Destroy(collision.gameObject);
+
+            Destroy(gameObject);
             return;
         }
 
@@ -122,7 +112,7 @@ public class Ball : MonoBehaviour
     {
         if (explosionPrefab != null)
         {
-            SettingPanel.Instance.PlaySound(7);
+            if (SettingPanel.Instance != null) SettingPanel.Instance.PlaySound(7);
             Instantiate(explosionPrefab, pos, rot);
         }
     }

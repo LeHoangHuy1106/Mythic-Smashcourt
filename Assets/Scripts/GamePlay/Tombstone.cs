@@ -80,7 +80,7 @@ public class Tombstone : MonoBehaviour
     {
         if (other.CompareTag("statue"))
         {
-            overlapStatue = true;
+            Destroy(gameObject);
         }
     }
 }

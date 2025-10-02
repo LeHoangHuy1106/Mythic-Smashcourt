@@ -20,6 +20,7 @@ public class Loading : MonoBehaviour
         }
         StartCoroutine(LoadingRoutine());
 
+
     }
 
     private IEnumerator LoadingRoutine()
